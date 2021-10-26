@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Param } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Param,
+  Patch,
+  Delete,
+} from "@nestjs/common";
 import { BookService } from "./book.service";
 
 @Controller("/book")
@@ -22,6 +30,22 @@ export class BookController {
 
   @Get(":id")
   getOneBook(@Param("id") bookID: string) {
-    return this.bookService.fetchSingleProduct(bookID);
+    return this.bookService.fetchSingleBook(bookID);
+  }
+
+  @Patch(":id")
+  updateBook(
+    @Param("id") bookID: string,
+    @Body("name") name: string,
+    @Body("author") author: string,
+    @Body("publishYear") publishYear: number,
+  ) {
+    this.bookService.editBook(bookID, name, author, publishYear);
+    return null;
+  }
+
+  @Delete(":id")
+  deleteBook(@Param("id") bookID: string) {
+    return this.bookService.removeBook(bookID);
   }
 }

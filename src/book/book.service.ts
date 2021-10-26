@@ -17,11 +17,38 @@ export class BookService {
     return [...this.books];
   }
 
-  fetchSingleProduct(bookID: string) {
-    const product = this.books.find((book) => book.id === bookID);
-    if (!product) {
-      throw new NotFoundException("Could not find product");
+  fetchSingleBook(bookID: string) {
+    const [book] = this.findBook(bookID);
+    return { ...book };
+  }
+
+  editBook(bookID: string, name: string, author: string, publishYear: number) {
+    const [book, index] = this.findBook(bookID);
+    const updatedBook = { ...book };
+    if (name) {
+      updatedBook.name = name;
     }
-    return product;
+    if (author) {
+      updatedBook.author = author;
+    }
+    if (publishYear) {
+      updatedBook.publishYear = publishYear;
+    }
+    this.books[index] = updatedBook;
+  }
+
+  removeBook(bookID: string) {
+    const index = this.findBook(bookID)[1];
+    this.books.splice(index, 1);
+  }
+
+  private findBook(bookID: string): [Book, number] {
+    const bookIndex = this.books.findIndex((book) => book.id === bookID);
+    const book = this.books[bookIndex];
+
+    if (!book) {
+      throw new NotFoundException("Could not find book");
+    }
+    return [book, bookIndex];
   }
 }
