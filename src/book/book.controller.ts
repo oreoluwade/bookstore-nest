@@ -14,18 +14,23 @@ export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @Post()
-  createBook(
+  async createBook(
     @Body("name") name: string,
     @Body("author") author: string,
     @Body("publishYear") publishYear: number,
-  ): { id: string } {
-    const id = this.bookService.insertBook(name, author, publishYear);
-    return { id };
+  ) {
+    const generatedId = await this.bookService.insertBook(
+      name,
+      author,
+      publishYear,
+    );
+    return { id: generatedId };
   }
 
   @Get()
-  getBooks() {
-    return this.bookService.fetchAllBooks();
+  async getBooks() {
+    const booksArray = await this.bookService.fetchAllBooks();
+    return booksArray;
   }
 
   @Get(":id")
@@ -34,18 +39,19 @@ export class BookController {
   }
 
   @Patch(":id")
-  updateBook(
+  async updateBook(
     @Param("id") bookID: string,
     @Body("name") name: string,
     @Body("author") author: string,
     @Body("publishYear") publishYear: number,
   ) {
-    this.bookService.editBook(bookID, name, author, publishYear);
+    await this.bookService.editBook(bookID, name, author, publishYear);
     return null;
   }
 
   @Delete(":id")
-  deleteBook(@Param("id") bookID: string) {
-    return this.bookService.removeBook(bookID);
+  async deleteBook(@Param("id") bookID: string) {
+    await this.bookService.removeBook(bookID);
+    return null;
   }
 }
